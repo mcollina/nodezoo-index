@@ -7,7 +7,7 @@ var opts = {index: { elastic: 'http://' + elasticSearchIP + ':9200/'}}
 
 var seneca = require('seneca')(opts)
   .use('../index.js')
-  .use('collector', { host: influxIP })
+  .use('collector', { host: influxIP, database: 'stats', seriesName: 'actions' })
   .use('beanstalk-transport')
 
 seneca.listen({host: beanstakIP, port: 1130, type: 'beanstalk', pin: 'role:search,cmd:*'});
