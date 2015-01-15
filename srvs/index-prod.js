@@ -1,6 +1,13 @@
 'use strict';
 
-require('seneca')({index: { elastic: 'http://' + process.env.ES_IP + ':9200/'}})
+var elasticSearchIP = process.env.ES_IP || 'localhost';
+var beanstakIP = process.env.BEANSTALK_IP || 'localhost';
+var influxIP = process.env.INFLUX_IP || 'localhost';
+var opts = {index: { elastic: 'http://' + elasticSearchIP + ':9200/'}}
+
+var seneca = require('seneca')(opts)
   .use('../index.js')
+  .use('collector', { host: influxIP })
   .use('beanstalk-transport')
-  .listen({host: process.env.BEANSTALK_IP, port: 1130, type: 'beanstalk', pin: 'role:search,cmd:*'});
+
+seneca.listen({host: beanstakIP, port: 1130, type: 'beanstalk', pin: 'role:search,cmd:*'});
